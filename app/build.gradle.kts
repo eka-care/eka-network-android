@@ -45,14 +45,16 @@ android {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = "com.eka.network"
-            artifactId = "eka-network"
-            version = "1.0.0"
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
 
-            artifact("../app/build/outputs/aar/app-release.aar")
+                groupId = "com.eka.networking"
+                artifactId = "eka-networking"
+                version = "1.0.0"
+            }
         }
     }
 }
