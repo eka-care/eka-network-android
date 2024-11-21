@@ -50,7 +50,6 @@ afterEvaluate {
         publications {
             create<MavenPublication>("release") {
                 from(components["release"])
-
                 groupId = "com.eka.networking"
                 artifactId = "eka-networking"
                 version = "1.0.0"
@@ -61,13 +60,13 @@ afterEvaluate {
 
 dependencies {
 
-//    implementation(libs.androidx.appcompat)
-//    implementation(libs.material)
-//    implementation(libs.androidx.activity)
-//    implementation(libs.androidx.constraintlayout)
-//    testImplementation(libs.junit)
-//    androidTestImplementation(libs.androidx.junit)
-//    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.google.gson)
     implementation(libs.okhttp)
@@ -79,6 +78,6 @@ dependencies {
     implementation(libs.ok2curl)
     implementation(libs.haroldadmin.networkresponseadapter)
     implementation("com.squareup.retrofit2:converter-protobuf:2.9.0") {
-//        exclude(group = "com.google.protobuf")
+        exclude(group = "com.google.protobuf")
     }
 }
