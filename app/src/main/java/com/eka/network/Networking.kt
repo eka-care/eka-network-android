@@ -64,7 +64,9 @@ class Networking private constructor() {
             baseUrl(baseUrl)
             addCallAdapterFactory(NetworkResponseAdapterFactory())
             addConverterFactory(ScalarsConverterFactory.create())
-            addConverterFactory(if (converterFactoryType == ConverterFactoryType.GSON) GsonConverterFactory.create() else ProtoConverterFactory.create())
+            addConverterFactory(ProtoConverterFactory.create())
+            addConverterFactory(GsonConverterFactory.create())
+//            addConverterFactory(if (converterFactoryType == ConverterFactoryType.GSON) GsonConverterFactory.create() else ProtoConverterFactory.create())
         }
         val cookieManager = CookieManager()
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL)
