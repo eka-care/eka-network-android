@@ -29,37 +29,37 @@ class Networking private constructor() {
             Networking()
         }
 
-        fun init(baseUrl: String, okHttpSetup: IOkHttpSetup, converterFactoryType: ConverterFactoryType = ConverterFactoryType.GSON) {
-            instance.init(baseUrl, okHttpSetup, converterFactoryType)
+        fun init(baseUrl: String, curlLoggingEnabled : Boolean = false, okHttpSetup: IOkHttpSetup, converterFactoryType: ConverterFactoryType = ConverterFactoryType.GSON) {
+            instance.init(baseUrl = baseUrl, curlLoggingEnabled = curlLoggingEnabled, okHttpSetup = okHttpSetup, converterFactoryType = converterFactoryType)
         }
 
-        fun <T> create(clazz: Class<T>, baseUrl: String? = null, converterFactoryType: ConverterFactoryType = ConverterFactoryType.GSON): T =
-            instance.create(clazz, baseUrl, converterFactoryType)
+        fun <T> create(clazz: Class<T>, curlLoggingEnabled : Boolean = false, baseUrl: String? = null, converterFactoryType: ConverterFactoryType = ConverterFactoryType.GSON): T =
+            instance.create(clazz, curlLoggingEnabled = curlLoggingEnabled, baseUrl, converterFactoryType)
 
     }
 
-    fun init(baseUrl: String, okHttpSetup: IOkHttpSetup, converterFactoryType: ConverterFactoryType) {
+    fun init(baseUrl: String, curlLoggingEnabled : Boolean = false, okHttpSetup: IOkHttpSetup, converterFactoryType: ConverterFactoryType) {
         if (this::baseUrl.isInitialized) {
             throw Exception("Networking is already initialised. Check if you are calling from multiple places")
         }
         this.baseUrl = baseUrl
         this.okHttpSetup = okHttpSetup
-        retrofit = createClient(this.baseUrl, converterFactoryType)
+        retrofit = createClient(baseUrl = this.baseUrl, curlLoggingEnabled = curlLoggingEnabled, converterFactoryType = converterFactoryType)
     }
 
     @Synchronized
-    fun <T> create(clazz: Class<T>, baseUrl: String? = null, converterFactoryType: ConverterFactoryType): T {
+    fun <T> create(clazz: Class<T>, curlLoggingEnabled : Boolean = false, baseUrl: String? = null, converterFactoryType: ConverterFactoryType): T {
         val key = clazz.canonicalName
         return servicesCache.getOrPut(key) {
             if (!baseUrl.isNullOrEmpty() && !this.baseUrl.equals(baseUrl, true)) createClient(
-                baseUrl, converterFactoryType
+                baseUrl, curlLoggingEnabled = curlLoggingEnabled, converterFactoryType
             ).create(clazz)
             else retrofit.create(clazz)
         } as T
     }
 
 
-    private fun createClient(baseUrl: String, converterFactoryType: ConverterFactoryType): Retrofit {
+    private fun createClient(baseUrl: String, curlLoggingEnabled : Boolean = false, converterFactoryType: ConverterFactoryType): Retrofit {
         val builder = Retrofit.Builder().apply {
             baseUrl(baseUrl)
             addCallAdapterFactory(NetworkResponseAdapterFactory())
@@ -83,7 +83,7 @@ class Networking private constructor() {
             .authenticator(AccessTokenAuthenticator(okHttpSetup))
             .cookieJar(JavaNetCookieJar(cookieManager))
 
-        if (BuildConfig.DEBUG == true) {
+        if (curlLoggingEnabled) {
             clientBuilder.addInterceptor(interceptor)
                 .addInterceptor(CurlInterceptor(object : Logger {
                     override fun log(message: String) {
