@@ -34,7 +34,7 @@ class Networking private constructor() {
         }
 
         fun <T> create(clazz: Class<T>, curlLoggingEnabled : Boolean = false, baseUrl: String? = null, converterFactoryType: ConverterFactoryType = ConverterFactoryType.GSON): T =
-            instance.create(clazz, curlLoggingEnabled = curlLoggingEnabled, baseUrl, converterFactoryType)
+            instance.create(clazz = clazz, curlLoggingEnabled = curlLoggingEnabled,baseUrl = baseUrl, converterFactoryType = converterFactoryType)
 
     }
 
@@ -52,7 +52,7 @@ class Networking private constructor() {
         val key = clazz.canonicalName
         return servicesCache.getOrPut(key) {
             if (!baseUrl.isNullOrEmpty() && !this.baseUrl.equals(baseUrl, true)) createClient(
-                baseUrl, curlLoggingEnabled = curlLoggingEnabled, converterFactoryType
+                baseUrl = baseUrl, curlLoggingEnabled = curlLoggingEnabled, converterFactoryType = converterFactoryType
             ).create(clazz)
             else retrofit.create(clazz)
         } as T
@@ -64,9 +64,8 @@ class Networking private constructor() {
             baseUrl(baseUrl)
             addCallAdapterFactory(NetworkResponseAdapterFactory())
             addConverterFactory(ScalarsConverterFactory.create())
-            addConverterFactory(ProtoConverterFactory.create())
             addConverterFactory(GsonConverterFactory.create())
-//            addConverterFactory(if (converterFactoryType == ConverterFactoryType.GSON) GsonConverterFactory.create() else ProtoConverterFactory.create())
+            addConverterFactory(if (converterFactoryType == ConverterFactoryType.PROTO) ProtoConverterFactory.create() else GsonConverterFactory.create())
         }
         val cookieManager = CookieManager()
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL)
