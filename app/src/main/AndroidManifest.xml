@@ -3,10 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application>
-        <activity
-            android:name=".MainActivity"
-            android:exported="false">
-        </activity>
     </application>
 
 </manifest>
