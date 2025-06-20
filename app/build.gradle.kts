@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.eka.network"
+    namespace = "com.eka.networking"
     compileSdk = 34
 
     defaultConfig {
