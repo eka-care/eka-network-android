@@ -3,14 +3,12 @@ package com.eka.networking.client
 import android.util.Log
 import androidx.annotation.Keep
 import com.eka.networking.creator.ApiServiceCreator
-import com.eka.networking.creator.ConverterFactoryType
 import com.eka.networking.creator.RetrofitServiceCreator
 import com.eka.networking.interceptor.AuthInterceptorImpl
 import com.eka.networking.interceptor.HeaderInformationInterceptor
 import com.eka.networking.interceptor.HeaderInformationInterceptorImpl
 import com.eka.networking.service.AuthApi
 import com.eka.networking.token.DefaultTokenProvider
-import com.eka.networking.token.TokenStorage
 
 @Keep
 object EkaNetwork {
@@ -33,15 +31,18 @@ object EkaNetwork {
         }
 
         val headerInterceptor: HeaderInformationInterceptor = HeaderInformationInterceptorImpl(
-            headers = config.headers
+            tokenStorage = config.tokenStorage,
+            headers = config.headers.toMutableMap().also {
+                it.remove("auth")
+                it.remove("Authorization")
+            }
         )
         val authApi = RetrofitServiceCreator(
             appConfig = config,
             headerInformationInterceptor = headerInterceptor
         ).create(
             serviceClass = AuthApi::class.java,
-            serviceUrl = config.baseUrl,
-            converterFactoryType = ConverterFactoryType.GSON
+            serviceUrl = config.baseUrl
         )
 
         return creators[appId]?.getOrPut(service) {

@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName
 
 @Keep
 data class AuthRefreshRequest(
-    @SerializedName("sess") val sessionToken: String,
-    @SerializedName("refresh") val refresh: String,
+    @SerializedName("refresh_token") val refresh: String,
+    @SerializedName("access_token") val sessionToken: String,
 )

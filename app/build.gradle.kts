@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.android.library")
     id("maven-publish")
+    kotlin("kapt")
     id("com.google.devtools.ksp")
 }
 
@@ -60,10 +61,6 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.retrofit)
     implementation(libs.ok2curl)
-    implementation(libs.moshi)
-    implementation(libs.moshi.adapters)
-    ksp(libs.moshi.kotlin.codegen)
-    implementation(libs.converter.moshi)
     implementation(libs.converter.gson)
     implementation(libs.okhttp.brotli)
     implementation(libs.okhttp)

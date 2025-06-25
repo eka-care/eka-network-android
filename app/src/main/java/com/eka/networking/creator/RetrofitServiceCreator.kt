@@ -1,22 +1,18 @@
 package com.eka.networking.creator
 
 import android.util.Log
-import com.eka.networking.adapter.JSONArrayAdapter
-import com.eka.networking.adapter.JSONObjectAdapter
 import com.eka.networking.client.NetworkConfig
 import com.eka.networking.interceptor.AuthInterceptor
 import com.eka.networking.interceptor.HeaderInformationInterceptor
 import com.eka.networking.response.NetworkResponseCallAdapterFactory
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
-import com.squareup.moshi.Moshi
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 internal class RetrofitServiceCreator(
@@ -51,38 +47,18 @@ internal class RetrofitServiceCreator(
         addInterceptor(BrotliInterceptor)
     }.build()
 
-    private val defaultRemoteMoshi = Moshi.Builder().build().newBuilder()
-        .add(JSONArrayAdapter)
-        .add(JSONObjectAdapter).build()
-
     override fun <T> create(
         serviceClass: Class<T>,
-        serviceUrl : String?,
-        converterFactoryType: ConverterFactoryType,
-    ): T = createRetrofitBuilder(serviceUrl = serviceUrl, converterFactoryType = converterFactoryType).build().create(serviceClass)
+        serviceUrl: String?,
+    ): T = createRetrofitBuilder(
+        serviceUrl = serviceUrl,
+    ).build().create(serviceClass)
 
-    private fun createRetrofitBuilder(serviceUrl : String?, converterFactoryType: ConverterFactoryType) =
+    private fun createRetrofitBuilder(serviceUrl: String?) =
         with(Retrofit.Builder()) {
             client(okHttpClient)
             addCallAdapterFactory(NetworkResponseCallAdapterFactory)
-            addConverterFactory(
-                when (converterFactoryType) {
-                    ConverterFactoryType.MOSHI -> {
-                        MoshiConverterFactory.create(
-                            defaultRemoteMoshi
-                        )
-                    }
-
-                    ConverterFactoryType.GSON -> {
-                        GsonConverterFactory.create()
-                    }
-                }
-            )
+            addConverterFactory(GsonConverterFactory.create())
             baseUrl(serviceUrl ?: "https://api.eka.care")
         }
-}
-
-enum class ConverterFactoryType {
-    GSON,
-    MOSHI
 }

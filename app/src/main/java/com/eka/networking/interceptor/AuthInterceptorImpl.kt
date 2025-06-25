@@ -15,8 +15,8 @@ internal class AuthInterceptorImpl(
         val requestWithAuth = originalRequest.newBuilder()
             .apply {
                 accessToken?.let {
-                    addHeader("Authorization", "Bearer $it")
-                    addHeader("auth", it)
+                    header("Authorization", "Bearer $it")
+                    header("auth", it)
                 }
             }
             .build()
@@ -29,8 +29,8 @@ internal class AuthInterceptorImpl(
                 val newToken = tokenProvider.refreshTokenIfNeeded()
                 if (!newToken.isNullOrEmpty()) {
                     val retryRequest = originalRequest.newBuilder()
-                        .addHeader("Authorization", "Bearer $newToken")
-                        .addHeader("auth", newToken)
+                        .header("Authorization", "Bearer $newToken")
+                        .header("auth", newToken)
                         .build()
                     chain.proceed(retryRequest)
                 } else {
