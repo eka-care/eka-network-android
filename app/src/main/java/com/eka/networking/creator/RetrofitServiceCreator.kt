@@ -4,7 +4,7 @@ import android.util.Log
 import com.eka.networking.client.NetworkConfig
 import com.eka.networking.interceptor.AuthInterceptor
 import com.eka.networking.interceptor.HeaderInformationInterceptor
-import com.eka.networking.response.NetworkResponseCallAdapterFactory
+import com.haroldadmin.cnradapter.NetworkResponseAdapterFactory
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import okhttp3.ConnectionPool
@@ -57,7 +57,7 @@ internal class RetrofitServiceCreator(
     private fun createRetrofitBuilder(serviceUrl: String?) =
         with(Retrofit.Builder()) {
             client(okHttpClient)
-            addCallAdapterFactory(NetworkResponseCallAdapterFactory)
+            addCallAdapterFactory(NetworkResponseAdapterFactory())
             addConverterFactory(GsonConverterFactory.create())
             baseUrl(serviceUrl ?: "https://api.eka.care")
         }
