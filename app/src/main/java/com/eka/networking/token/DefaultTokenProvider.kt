@@ -3,6 +3,7 @@ package com.eka.networking.token
 import android.util.Base64
 import com.eka.networking.service.AuthApi
 import com.eka.networking.service.AuthRefreshRequest
+import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -37,15 +38,19 @@ class DefaultTokenProvider(
                     isRefreshing = true
                     val refreshToken = tokenStorage.getRefreshToken()
                     val sessionToken = tokenStorage.getAccessToken()
-                    val response = authApi.refresh(
+
+                    val response = when (val response = authApi.refresh(
                         AuthRefreshRequest(
                             sessionToken = sessionToken,
                             refresh = refreshToken
                         )
-                    )
-                    
-                    val newAccessToken = response.body()?.sessionToken
-                    val newRefreshToken = response.body()?.refreshToken
+                    )) {
+                        is NetworkResponse.Success -> response.body
+                        else -> null
+                    }
+
+                    val newAccessToken = response?.sessionToken
+                    val newRefreshToken = response?.refreshToken
 
                     if (newAccessToken == null || newRefreshToken == null) {
                         throw IllegalStateException("Failed to refresh tokens: response is null")
@@ -84,7 +89,8 @@ class DefaultTokenProvider(
     }
 
     private fun decodeBase64(encoded: String): String {
-        val decodedBytes = Base64.decode(encoded, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+        val decodedBytes =
+            Base64.decode(encoded, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
         return String(decodedBytes, Charsets.UTF_8)
     }
 }

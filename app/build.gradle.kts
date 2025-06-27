@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.okhttp.brotli)
     implementation(libs.okhttp)
     implementation(libs.retrofit)
+    api(libs.networkresponseadapter)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.core)
 }
