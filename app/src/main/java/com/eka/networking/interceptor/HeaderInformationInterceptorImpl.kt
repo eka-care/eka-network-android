@@ -18,8 +18,10 @@ internal class HeaderInformationInterceptorImpl(
         val accessToken = runBlocking { tokenStorage.getAccessToken() }
         requestBuilder.removeHeader("auth")
         requestBuilder.removeHeader("Authorization")
-        requestBuilder.header("Authorization", "Bearer $accessToken")
-        requestBuilder.header("auth", accessToken)
+        if(chain.request().url.host.endsWith("eka.care")) {
+            requestBuilder.header("Authorization", "Bearer $accessToken")
+            requestBuilder.header("auth", accessToken)
+        }
         return chain.proceed(request = requestBuilder.build())
     }
 }
