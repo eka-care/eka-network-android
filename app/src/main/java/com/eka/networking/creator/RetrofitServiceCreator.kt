@@ -23,6 +23,10 @@ internal class RetrofitServiceCreator(
 
     private val okHttpClient = OkHttpClient.Builder().apply {
         connectTimeout(appConfig.apiCallTimeOutInSec, TimeUnit.SECONDS)
+        callTimeout(appConfig.apiCallTimeOutInSec, TimeUnit.SECONDS)
+        connectTimeout(appConfig.apiCallTimeOutInSec, TimeUnit.SECONDS)
+        readTimeout(appConfig.apiCallTimeOutInSec, TimeUnit.SECONDS)
+        writeTimeout(appConfig.apiCallTimeOutInSec, TimeUnit.SECONDS)
         connectionPool(
             ConnectionPool(
                 maxIdleConnections = 5,
