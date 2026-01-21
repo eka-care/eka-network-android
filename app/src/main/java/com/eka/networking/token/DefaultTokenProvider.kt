@@ -69,7 +69,7 @@ class DefaultTokenProvider(
         }
     }
 
-    override fun clearToken() {
+    override fun sessionExpired() {
         tokenStorage.onSessionExpired()
     }
 

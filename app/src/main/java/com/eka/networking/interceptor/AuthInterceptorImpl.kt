@@ -34,6 +34,7 @@ internal class AuthInterceptorImpl(
                         .build()
                     chain.proceed(retryRequest)
                 } else {
+                    tokenProvider.sessionExpired()
                     response
                 }
             }
