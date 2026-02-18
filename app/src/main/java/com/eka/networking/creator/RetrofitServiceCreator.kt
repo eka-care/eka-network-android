@@ -11,6 +11,7 @@ import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter.Factory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -54,15 +55,19 @@ internal class RetrofitServiceCreator(
     override fun <T> create(
         serviceClass: Class<T>,
         serviceUrl: String?,
+        converterFactory: Factory,
     ): T = createRetrofitBuilder(
         serviceUrl = serviceUrl,
+        converterFactory = converterFactory,
     ).build().create(serviceClass)
 
-    private fun createRetrofitBuilder(serviceUrl: String?) =
-        with(Retrofit.Builder()) {
-            client(okHttpClient)
-            addCallAdapterFactory(NetworkResponseAdapterFactory())
-            addConverterFactory(GsonConverterFactory.create())
-            baseUrl(serviceUrl ?: "https://api.eka.care")
-        }
+    private fun createRetrofitBuilder(
+        serviceUrl: String?,
+        converterFactory: Factory,
+    ) = with(Retrofit.Builder()) {
+        client(okHttpClient)
+        addCallAdapterFactory(NetworkResponseAdapterFactory())
+        addConverterFactory(converterFactory)
+        baseUrl(serviceUrl ?: "https://api.eka.care")
+    }
 }

@@ -17,7 +17,7 @@ object EkaNetwork {
     private val configs = mutableMapOf<String, NetworkConfig>()
 
     fun init(networkConfig: NetworkConfig) {
-        creators.put(networkConfig.appId, emptyMap<String, ApiServiceCreator>().toMutableMap())
+        creators[networkConfig.appId] = emptyMap<String, ApiServiceCreator>().toMutableMap()
         configs[networkConfig.appId] = networkConfig
     }
 
@@ -39,7 +39,7 @@ object EkaNetwork {
         )
         val authApi = RetrofitServiceCreator(
             appConfig = config,
-            headerInformationInterceptor = headerInterceptor
+            headerInformationInterceptor = headerInterceptor,
         ).create(
             serviceClass = AuthApi::class.java,
             serviceUrl = config.baseUrl
@@ -54,7 +54,7 @@ object EkaNetwork {
                         authApi = authApi
                     )
                 ),
-                headerInformationInterceptor = headerInterceptor
+                headerInformationInterceptor = headerInterceptor,
             )
         } ?: throw IllegalStateException("No creator found for service: $service")
     }

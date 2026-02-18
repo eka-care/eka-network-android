@@ -53,6 +53,10 @@ afterEvaluate {
             }
         }
     }
+
+    tasks.named("publishReleasePublicationToMavenLocal") {
+        dependsOn(tasks.named("bundleReleaseAar"))
+    }
 }
 
 dependencies {
