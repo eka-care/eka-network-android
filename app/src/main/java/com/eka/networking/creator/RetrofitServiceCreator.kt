@@ -8,16 +8,17 @@ import com.haroldadmin.cnradapter.NetworkResponseAdapterFactory
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import okhttp3.ConnectionPool
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.brotli.BrotliInterceptor
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter.Factory
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 internal class RetrofitServiceCreator(
     private val appConfig: NetworkConfig,
+    private val extraInterceptors: List<Interceptor> = emptyList(),
     private val authInterceptor: AuthInterceptor? = null,
     private val headerInformationInterceptor: HeaderInformationInterceptor,
 ) : ApiServiceCreator {
@@ -49,6 +50,7 @@ internal class RetrofitServiceCreator(
                 }
             }))
         }
+        extraInterceptors.forEach { addInterceptor(it) }
         addInterceptor(BrotliInterceptor)
     }.build()
 
